@@ -1,0 +1,147 @@
+<html>
+
+<head>
+    <title>hive mind draft</title>
+    <meta charset="utf-8">
+    <style>
+        * {
+          box-sizing: border-box;
+        }
+        
+        .img-container {
+          float: left;
+          width: 384px;
+          height: 534px;
+          padding: 20px;
+        }
+
+        div.img-container img {
+            z-index: -1;
+        }
+        
+        .clearfix::after {
+          content: "";
+          clear: both;
+          display: table;
+        }
+
+        div.zhsdesc {
+            visibility: hidden;
+            position: relative;
+            top: -110px;
+            left: 7px;
+            width: 170px; 
+            border: 2px black; 
+            font-size: 10px; 
+            margin: 7px;
+            padding: 7px;
+            z-index: 9999;
+        }
+        div.img-container:hover :nth-child(3) {
+            background-color: #ffffff; 
+            visibility: visible;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <p>当前游戏状态: {{state}}</p>
+
+    <table border="1">
+        {{#players}}
+        <tr>
+            <td>{{nick}}</td>
+            <td>{{packnum}}</td>
+        </tr>
+        {{/players}}
+    </table>
+
+    {{#download}}
+        <a href="/download/{{sessionid}}">下载牌组列表</a>
+    {{/download}}
+
+    {{#start}}
+        <br><br>
+        <form action="/start-session/{{sessionid}}" method="POST">
+            <input type="submit" value="开始">
+        </form>
+    {{/start}}
+
+    {{#join}}
+        <br><br>
+        <form action="/join/{{sessionid}}" method="POST">
+            <label for="nickname">名字:</label><br>
+            <input type="text" id="nickname" name="nickname" value=""><br>
+            <input type="submit" value="加入"> 
+        </form>
+    {{/join}}
+
+
+    <h1>可选牌</h1>
+    <div class="clearfix">
+        {{#cardstopick}}
+        <div class="img-container">
+            <div><form action="/select/{{sessionid}}/{{nameurl}}" method="POST">
+                <input type="submit" value="{{name}}">
+            </form></div>
+            <img class="cardimg" src="{{imgurl}}" alt="{{name}}" style="width:100%">
+            <!-- {{{stab}}}
+            <div class="zhsdesc">
+                <p>{{{zhstext}}}</p>
+            </div> -->
+        </div>
+        {{/cardstopick}}
+    </div>
+
+    <h1>已选牌</h1>
+
+    <div class="clearfix">
+        {{#cardspicked}}
+        <div class="img-container">
+            <div></div>
+            <img class="cardimg" src="{{imgurl}}" alt="{{name}}" style="width:100%">
+            <!-- {{{stab}}}
+            <div class="zhsdesc">
+                <p>{{{zhstext}}}</p>
+            </div> -->
+        </div>
+        {{/cardspicked}}
+    </div>
+
+
+<script>
+
+window.lastUpdate = 0;
+
+function reqListener () {
+    if (this.readyState != 4 || this.status != 200) {
+        return;
+    }
+    console.log(this.responseText);
+    let timestamp = parseInt(this.responseText);
+    if (window.lastUpdate == 0) {
+        window.lastUpdate = timestamp;
+        return;
+    }
+    if (window.lastUpdate < timestamp) {
+        window.lastUpdate = timestamp;
+        location.reload(); 
+    }
+}
+
+function checkTimestamp() {
+    var oReq = new XMLHttpRequest();
+    oReq.onreadystatechange = reqListener;
+    var url = window.location.href;
+    oReq.open("GET", url.replace("/session/", "/timestamp/"), true);
+    oReq.send();
+}
+checkTimestamp();
+setInterval(checkTimestamp, 5000);
+
+</script>
+
+</body>
+
+</html>

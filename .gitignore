@@ -1,0 +1,4 @@
+*.o
+hivemind
+hivemind-release.tar.gz
+mtg.json
