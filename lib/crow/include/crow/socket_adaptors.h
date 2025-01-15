@@ -19,7 +19,7 @@ namespace crow
 
         boost::asio::io_service& get_io_service()
         {
-            return *socket_.get_executor().target<boost::asio::io_context>();
+            return const_cast<boost::asio::io_service&>(*socket_.get_executor().target<boost::asio::io_context>());
         }
 
         tcp::socket& raw_socket()

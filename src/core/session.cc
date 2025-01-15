@@ -1,7 +1,6 @@
 #include "core/session.h"
 
-#include <exception>
-#include <random>
+#include <algorithm>
 
 static std::map<std::string, Arc<Session>> session_map;
 static std::mutex session_map_lock;
@@ -163,9 +162,15 @@ void Session::select_card(Arc<User> user, Arc<Card> card) {
             user_state->selected_card.push_back(card);
             pack->erase(it);
             if (!pack->empty()) {
-                users[(user_idx + 1) % player_num]->card_pack_queue.push(pack);
-                if (users[(user_idx + 1) % player_num]->card_pack_queue.size() == 1) {
-                    users[(user_idx + 1) % player_num]->time_last_updated = std::chrono::system_clock::now();
+                int next_user_idx = -1;
+                if (round_num % 2 == 0) {
+                    next_user_idx = (user_idx + 1) % player_num;
+                } else {
+                    next_user_idx = (user_idx + player_num - 1) % player_num;
+                }
+                users[next_user_idx]->card_pack_queue.push(pack);
+                if (users[next_user_idx]->card_pack_queue.size() == 1) {
+                    users[next_user_idx]->time_last_updated = std::chrono::system_clock::now();
                 }
             }
             user_state->card_pack_queue.pop();

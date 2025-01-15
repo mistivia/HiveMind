@@ -25,6 +25,8 @@ Arc<Card> get_card(std::string name) {
     card->image_url = "https://api.scryfall.com/cards/named?format=image&version=normal&exact=" + url_encode(name);
     if (card_db.find(name) != card_db.end()) {
         card->zhsname = card_db[name].zhsname;
+        // fix scryfall
+        str_replace(card->zhsname, "：", " ");
         card->zhstext = card_db[name].zhstext;
         card->image_url = "https://api.scryfall.com/cards/named?format=image&version=normal&fuzzy=" + url_encode(card->zhsname);
         str_replace(card->zhstext, "\001", "\n");
