@@ -18,4 +18,5 @@ make && ./hivemind
 
 ## 截图
 
-![图片](https://user-images.githubusercontent.com/32918714/117160240-88e06e80-adf3-11eb-9315-18a98d128bcd.png)
+![image](https://github.com/user-attachments/assets/cf8f4899-794d-4792-9e08-9c45e82c4891)
+
