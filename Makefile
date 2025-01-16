@@ -3,13 +3,18 @@ CFLAGS= -g -std=c++17 -Wall
 RM= rm -f
 
 LIBS = -lm -lpthread -lmstch -static
-INCS = -I./src/ -I./lib/crow/include/
+INCS = -I./src/ -I./lib/crow/include/ -Ilib/mstch/include/
 
 OBJ = $(patsubst %.cc,%.o,$(shell find src/ -name *.cc))
 
 all: hivemind
 
-hivemind: $(OBJ)
+lib/mstch/src/libmstch.a:
+	cd lib/mstch && \
+	cmake . && \
+	make
+
+hivemind: $(OBJ) lib/mstch/src/libmstch.a
 	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
 
 package: hivemind
@@ -21,3 +26,4 @@ package: hivemind
 .PHONY: clean
 clean:
 	-$(RM) $(shell find . -name *.o) hivemind
+	-cd lib/mstch && make clean
